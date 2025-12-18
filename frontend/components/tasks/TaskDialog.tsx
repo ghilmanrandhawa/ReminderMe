@@ -139,66 +139,10 @@ export function TaskDialog({ trigger, taskToEdit, open: controlledOpen, onOpenCh
       // Ideally we'd update the pattern if it changed
     } else {
       // Create new task
-      // We need to handle the recurring pattern creation here
-      // But addTask doesn't return the ID immediately in our context mock...
-      // So we'll modify addTask to return ID or handle it differently.
-      // Actually, let's just add the task first.
-      
-      // Wait, if it's recurring, we need to create the pattern.
-      // But the pattern needs the task ID.
-      // And the task needs the pattern ID.
-      // Circular dependency.
-      // Solution: Create task first, then if recurring, create pattern and update task.
-      // But I can't get the ID from addTask easily in this mock setup without refactoring.
-      // I'll refactor addTask in StoreContext to return the new task or ID.
-      // For now, I'll generate ID here to link them.
-      
-      // Actually, I'll just pass the recurring info to a new method `addTaskWithPattern` or handle it in `addTask`.
-      // Let's keep it simple: I'll generate the IDs here.
-      
-      const taskId = 'task_' + Math.random().toString(36).substr(2, 9);
-      let patternId = undefined;
-
-      if (values.isRecurring && values.recurringInterval) {
-        patternId = 'pattern_' + Math.random().toString(36).substr(2, 9);
-        addRecurringPattern({
-          id: patternId, // We need to allow passing ID or change the type
-          taskId: taskId,
-          interval: values.recurringInterval as RecurringInterval,
-          lastInstanceDate: format(values.dueDate, "yyyy-MM-dd"),
-        } as any); // Type assertion because addRecurringPattern expects Omit<..., 'id'>
-      }
-
-      // We need to manually call the internal logic of addTask but with our ID
-      // Since I can't change the context easily from here without editing the file,
-      // I will edit StoreContext.tsx to allow passing ID or return it.
-      // For now, let's assume I'll fix StoreContext.
-      
-      // Actually, I'll just use the existing addTask and ignore the recurring link for a second,
-      // then update it. But I don't know the ID.
-      
-      // Okay, I will edit StoreContext.tsx in the next step to make this robust.
-      // For now, I will just call addTask and if it's recurring, I'll just add the pattern with a placeholder ID
-      // and rely on the fact that this is a mock.
-      
-      // BETTER PLAN: I'll just pass the recurring config to addTask and let the store handle it.
-      // But addTask signature is fixed.
-      
-      // I'll stick to: I will edit StoreContext.tsx to return the created task.
-      // But I can't do that right now inside this file creation.
-      
-      // I'll implement the form logic assuming `addTask` returns the task or ID.
-      // I'll fix StoreContext immediately after this.
-      
       addTask({
         ...taskData,
-        recurringPatternId: undefined, // Will be updated if I could get the ID
+        recurringInterval: values.isRecurring ? (values.recurringInterval as RecurringInterval) : undefined,
       });
-      
-      // Since I can't get the ID, I'll just implement a "hack" in StoreContext later
-      // where I pass the pattern in the task object as a temporary field? No.
-      
-      // I'll just generate the ID here and pass it to addTask if I modify addTask to accept an optional ID.
     }
     
     setOpen(false);
@@ -437,3 +381,4 @@ export function TaskDialog({ trigger, taskToEdit, open: controlledOpen, onOpenCh
     </Dialog>
   );
 }
+
