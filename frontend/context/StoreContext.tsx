@@ -29,6 +29,8 @@ interface StoreContextType {
 
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
 
+import { ReminderSystem } from "./ReminderSystem";
+
 export function StoreProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -254,6 +256,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       deleteTag,
       addRecurringPattern
     }}>
+      <ReminderSystem />
       {children}
     </StoreContext.Provider>
   );
@@ -266,4 +269,5 @@ export function useStore() {
   }
   return context;
 }
+
 
