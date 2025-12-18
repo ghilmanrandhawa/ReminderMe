@@ -60,7 +60,7 @@ export function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader className="h-16 flex items-center justify-center border-b border-slate-800/50">
+      <SidebarHeader className="h-16 flex items-center justify-center border-b border-sidebar-border">
         <div className="flex items-center gap-2 px-2 w-full">
           <div className="bg-gradient-to-br from-teal-400 to-blue-500 p-1.5 rounded-lg">
             <Bell className="w-5 h-5 text-white" />
@@ -81,7 +81,6 @@ export function AppSidebar() {
                     asChild 
                     isActive={pathname === item.url || pathname?.startsWith(`${item.url}/`)}
                     tooltip={item.title}
-                    className="data-[active=true]:bg-teal-500/10 data-[active=true]:text-teal-400 hover:bg-slate-800/50 hover:text-teal-400 transition-all duration-200"
                   >
                     <Link href={item.url}>
                       <item.icon />
@@ -94,11 +93,11 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter className="border-t border-slate-800/50 p-4">
+      <SidebarFooter className="border-t border-sidebar-border p-4">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton 
-              className="text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+              className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
               onClick={() => {
                 // Mock logout - will be implemented with AuthContext
                 window.location.href = "/";
@@ -114,3 +113,4 @@ export function AppSidebar() {
     </Sidebar>
   );
 }
+
