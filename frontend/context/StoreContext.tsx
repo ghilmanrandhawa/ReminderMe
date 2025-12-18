@@ -12,7 +12,7 @@ interface StoreContextType {
   isLoading: boolean;
   
   // Task Operations
-  addTask: (task: Omit<Task, 'id' | 'ownerId' | 'createdAt' | 'updatedAt' | 'status'>) => void;
+  addTask: (task: Omit<Task, 'id' | 'ownerId' | 'createdAt' | 'updatedAt' | 'status'> & { recurringInterval?: RecurringInterval }) => void;
   updateTask: (id: string, updates: Partial<Task>) => void;
   deleteTask: (id: string) => void;
   markTaskComplete: (id: string) => void;
@@ -82,12 +82,34 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   }, [recurringPatterns, user, isLoading]);
 
   // Task Operations
-  const addTask = (taskData: Omit<Task, 'id' | 'ownerId' | 'createdAt' | 'updatedAt' | 'status'>) => {
+  const addTask = (taskData: Omit<Task, 'id' | 'ownerId' | 'createdAt' | 'updatedAt' | 'status'> & { recurringInterval?: RecurringInterval }) => {
     if (!user) return;
     
+    const taskId = 'task_' + Math.random().toString(36).substr(2, 9);
+    let recurringPatternId = undefined;
+
+    // Handle recurring pattern creation if interval is provided
+    if (taskData.recurringInterval) {
+      const patternId = 'pattern_' + Math.random().toString(36).substr(2, 9);
+      const newPattern: RecurringPattern = {
+        id: patternId,
+        taskId: taskId,
+        interval: taskData.recurringInterval,
+        lastInstanceDate: taskData.dueDate,
+      };
+      setRecurringPatterns(prev => [...prev, newPattern]);
+      recurringPatternId = patternId;
+    }
+    
     const newTask: Task = {
-      ...taskData,
-      id: 'task_' + Math.random().toString(36).substr(2, 9),
+      id: taskId,
+      title: taskData.title,
+      description: taskData.description,
+      dueDate: taskData.dueDate,
+      dueTime: taskData.dueTime,
+      tags: taskData.tags,
+      reminderOffset: taskData.reminderOffset,
+      recurringPatternId,
       ownerId: user.id,
       status: 'pending',
       createdAt: new Date().toISOString(),
@@ -244,3 +266,4 @@ export function useStore() {
   }
   return context;
 }
+
